@@ -197,6 +197,30 @@ header[role='banner'] {
   transform: translateY(-1px);
 }
 
+.nav-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur-fast);
+}
+.nav-menu-toggle:hover {
+  background: var(--surface-2);
+}
+.nav-menu-toggle:focus-visible {
+  outline: 2px solid var(--ring-strong);
+  outline-offset: 2px;
+}
+
 .language-selector select {
   min-height: 44px;
   padding: 0 2rem 0 0.9rem;
@@ -525,15 +549,50 @@ footer[role='contentinfo'] {
 
 /* ============================================================= RESPONSIVE */
 @media (max-width: 860px) {
-  .nav-menu {
-    display: none;
-  }
   .nav-container {
     justify-content: space-between;
+    flex-wrap: wrap;
   }
   .header-controls {
     margin-left: auto;
   }
+  .nav-menu-toggle {
+    display: inline-flex;
+  }
+
+  /* Collapsed by default; the toggle in LandingPage.tsx adds/removes
+     nav-menu--open to swap this for a dropdown panel below the header. */
+  .nav-menu {
+    display: none;
+  }
+  .nav-menu--open {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .nav-menu--open a {
+    display: block;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-sm);
+  }
+  .nav-menu--open a:hover,
+  .nav-menu--open a:focus-visible {
+    background: var(--surface-2);
+    color: var(--fg);
+  }
+  .nav-menu--open a::after {
+    display: none;
+  }
+
   .footer-content {
     grid-template-columns: 1fr 1fr;
   }

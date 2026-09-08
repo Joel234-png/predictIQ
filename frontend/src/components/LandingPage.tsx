@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useI18n } from '../lib/hooks/useI18n';
 import { useDarkMode } from '../lib/hooks/useDarkMode';
 import { type Locale } from '../lib/i18n';
@@ -18,6 +18,18 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ className }) => {
   const { t, locale, setLocale, availableLocales } = useI18n();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Below the 860px breakpoint the nav collapses into a disclosure panel;
+  // Escape closes it same as any other transient panel in this app.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isMenuOpen]);
 
   const features = [
     { icon: '/icons/decentralized.svg', title: t('features.decentralized.title'), description: t('features.decentralized.description'), href: '/markets' },
@@ -68,13 +80,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ className }) => {
               />
               <span className="logo-text" aria-hidden="true">PredictIQ</span>
             </div>
-            <ul className="nav-menu">
-              <li><a href="#features">Features</a></li>
-              <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+            <ul className={`nav-menu ${isMenuOpen ? 'nav-menu--open' : ''}`} id="primary-nav-menu">
+              <li><a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a></li>
+              <li><a href="#how-it-works" onClick={() => setIsMenuOpen(false)}>How It Works</a></li>
+              <li><a href="#about" onClick={() => setIsMenuOpen(false)}>About</a></li>
+              <li><a href="#contact" onClick={() => setIsMenuOpen(false)}>Contact</a></li>
             </ul>
-            
+
             {/* Controls */}
             <div className="header-controls">
               {/* Dark Mode Toggle */}
@@ -105,6 +117,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ className }) => {
                   ))}
                 </select>
               </div>
+
+              {/* Mobile nav toggle — only visible/interactive below the 860px
+                  breakpoint where .nav-menu collapses (see landing.css). */}
+              <button
+                type="button"
+                className="nav-menu-toggle"
+                aria-expanded={isMenuOpen}
+                aria-controls="primary-nav-menu"
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                onClick={() => setIsMenuOpen((open) => !open)}
+              >
+                <span aria-hidden="true">{isMenuOpen ? '✕' : '☰'}</span>
+              </button>
             </div>
           </div>
         </nav>
