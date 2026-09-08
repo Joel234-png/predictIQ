@@ -97,13 +97,15 @@ main > section > h2 {
   background: var(--success);
 }
 
-/* ============================================================= HEADER */
-header[role='banner'] {
+/* ============================================================= HEADER
+   Scoped to .landing-page: this file loads globally (imported once in
+   the root layout), and a bare `header[role='banner']` would otherwise
+   also match — and mis-style — AppShell's header on every other route. */
+.landing-page header[role='banner'] {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  backdrop-filter: blur(14px);
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -538,8 +540,9 @@ header[role='banner'] {
   font-size: var(--text-lg);
 }
 
-/* ============================================================= FOOTER */
-footer[role='contentinfo'] {
+/* ============================================================= FOOTER
+   Scoped to .landing-page for the same reason as the header rule above. */
+.landing-page footer[role='contentinfo'] {
   border-top: 1px solid var(--border);
   background: var(--bg-deep);
   padding: var(--space-section) clamp(1.25rem, 5vw, 3rem) 2rem;

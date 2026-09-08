@@ -62,7 +62,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ className }) => {
   ];
 
   return (
-    <div className={className}>
+    <div className={`landing-page ${className ?? ''}`}>
       {/* Skip to main content link */}
       <a href="#main-content" className="skip-link">
         Skip to main content

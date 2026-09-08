@@ -11,6 +11,11 @@
  * admin session exists — Admin) gets a persistent header with primary
  * navigation and a minimal footer, matching the sub-nav pattern already
  * established by app/admin/layout.tsx for its own section.
+ *
+ * Styled entirely via classNames (src/styles/ui.css), not inline `style`
+ * props: this app's CSP sends `style-src 'self'` with no `unsafe-inline`
+ * and no style nonce, so an inline style attribute is silently dropped by
+ * the browser rather than applied.
  */
 
 import React, { useEffect, useState } from 'react';
@@ -43,31 +48,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     : NAV_ITEMS;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="app-shell">
       <a href="#app-main-content" className="skip-link">
         Skip to main content
       </a>
 
-      <header
-        role="banner"
-        className="app-shell__header"
-        style={{
-          borderBottom: '1px solid var(--border)',
-          backgroundColor: 'color-mix(in srgb, var(--surface) 92%, transparent)',
-          backdropFilter: 'blur(12px)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
+      <header role="banner" className="app-shell__header">
         <div className="app-shell__header-inner">
-          <Link
-            href="/"
-            aria-label="PredictIQ Home"
-            style={{ textDecoration: 'none', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.2rem' }}
-          >
-            <span style={{ color: 'var(--fg)' }}>Predict</span>
-            <span style={{ color: 'var(--gold)' }}>IQ</span>
+          <Link href="/" aria-label="PredictIQ Home" className="app-shell__logo">
+            <span className="app-shell__logo-fg">Predict</span>
+            <span className="app-shell__logo-accent">IQ</span>
           </Link>
 
           <nav aria-label="Primary navigation" className="app-shell__nav">
@@ -79,10 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <Link
                       href={item.href}
                       aria-current={isActive ? 'page' : undefined}
-                      className="app-shell__nav-link"
-                      style={{
-                        color: isActive ? 'var(--gold)' : 'var(--fg-muted)',
-                      }}
+                      className={`app-shell__nav-link ${isActive ? 'app-shell__nav-link--active' : ''}`}
                     >
                       {item.label}
                     </Link>
@@ -94,21 +81,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main id="app-main-content" role="main" style={{ flex: 1 }}>
+      <main id="app-main-content" role="main" className="app-shell__main">
         {children}
       </main>
 
-      <footer
-        role="contentinfo"
-        style={{
-          borderTop: '1px solid var(--border)',
-          backgroundColor: 'var(--surface)',
-          padding: '1.5rem',
-          textAlign: 'center',
-          fontSize: 'var(--text-xs)',
-          color: 'var(--fg-muted)',
-        }}
-      >
+      <footer role="contentinfo" className="app-shell__footer">
         © {new Date().getFullYear()} PredictIQ. Built on Stellar.
       </footer>
     </div>
