@@ -26,7 +26,7 @@
   align-items: end;
   padding: 1.25rem;
   margin-bottom: 2rem;
-  background: var(--surface-glass);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }

@@ -10,6 +10,7 @@ import { NewsletterSignup } from './NewsletterSignup';
 import { FeatureCard } from './landing/FeatureCard';
 import { Step } from './landing/Step';
 import { FooterColumn } from './landing/FooterColumn';
+import { LiveMarketsTicker } from './landing/LiveMarketsTicker';
 
 interface LandingPageProps {
   className?: string;
@@ -139,28 +140,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ className }) => {
       <main id="main-content" role="main">
         {/* Hero Section */}
         <section aria-labelledby="hero-heading" className="hero">
-          <div className="hero-glow" aria-hidden="true" />
-          <span className="eyebrow">Live on Stellar</span>
-          <h1 id="hero-heading">
-            {t('hero.title')}
-          </h1>
-          <p className="hero-description">
-            {t('hero.description')}
-          </p>
+          <div className="hero-copy">
+            <span className="eyebrow">Live on Stellar</span>
+            <h1 id="hero-heading">
+              {t('hero.title')}
+            </h1>
+            <p className="hero-description">
+              {t('hero.description')}
+            </p>
 
-          {/* Primary CTAs into the live product. Plain links (not the newsletter
-              form) so the hero works with JS pending and needs no client state. */}
-          <div className="hero-cta-group">
-            <a href="/markets" className="hero-cta hero-cta--primary">
-              {t('hero.primaryCta')}
-            </a>
-            <a href="#how-it-works" className="hero-cta hero-cta--secondary">
-              {t('hero.secondaryCta')}
-            </a>
+            {/* Primary CTAs into the live product. Plain links (not the newsletter
+                form) so the hero works with JS pending and needs no client state. */}
+            <div className="hero-cta-group">
+              <a href="/markets" className="hero-cta hero-cta--primary">
+                {t('hero.primaryCta')}
+              </a>
+              <a href="#how-it-works" className="hero-cta hero-cta--secondary">
+                {t('hero.secondaryCta')}
+              </a>
+            </div>
+
+            {/* Early-access signup */}
+            <NewsletterSignup />
           </div>
 
-          {/* Early-access signup */}
-          <NewsletterSignup />
+          <LiveMarketsTicker />
         </section>
 
         {/* Statistics Section */}

@@ -40,9 +40,9 @@
 .admin-brand-badge {
   font-size: var(--text-xs);
   padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-pill);
-  background: var(--grad-brand);
-  color: #0f172a;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--on-primary);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
