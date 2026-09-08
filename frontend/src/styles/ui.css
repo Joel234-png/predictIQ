@@ -1,0 +1,145 @@
+/**
+ * PredictIQ UI primitives — interaction states.
+ *
+ * Button/Card/Modal/Select/TextInput/Textarea/Badge (src/components/ui/*)
+ * apply their resting look via inline styles keyed off design tokens in
+ * tokens.css. They also emit stable classNames (ui-btn, ui-card, ...) for
+ * exactly the states inline styles can't express — :hover/:focus-visible/
+ * :active and Badge's themed variant fills — which live here.
+ */
+
+/* ---- Button ---- */
+.ui-btn:focus-visible {
+  outline: 2px solid var(--ring-strong);
+  outline-offset: 2px;
+}
+.ui-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+.ui-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+.ui-btn--primary:not(:disabled):hover {
+  background-color: var(--gold-soft) !important;
+}
+.ui-btn--danger:not(:disabled):hover {
+  filter: brightness(1.12);
+}
+.ui-btn--secondary:not(:disabled):hover {
+  background-color: var(--surface) !important;
+  border-color: var(--border-strong) !important;
+}
+.ui-btn--ghost:not(:disabled):hover {
+  background-color: var(--surface-2) !important;
+  color: var(--fg) !important;
+}
+
+/* ---- Card ---- */
+.ui-card--interactive:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+.ui-card--interactive:focus-visible {
+  outline: 2px solid var(--ring-strong);
+  outline-offset: 2px;
+  border-color: var(--border-strong);
+}
+
+/* ---- Modal ---- */
+.ui-modal :where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--ring-strong);
+  outline-offset: 2px;
+}
+
+/* ---- Form fields (Select/TextInput/Textarea) ---- */
+.ui-field .ui-input:focus,
+.ui-field .ui-select:focus,
+.ui-field .ui-textarea:focus {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+}
+.ui-field .ui-input--error:focus,
+.ui-field .ui-select--error:focus,
+.ui-field .ui-textarea--error:focus {
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.25);
+}
+[data-theme='light'] .ui-field .ui-input:focus,
+[data-theme='light'] .ui-field .ui-select:focus,
+[data-theme='light'] .ui-field .ui-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+/* ---- Badge ---- */
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
+}
+.ui-badge--neutral {
+  background: rgba(159, 176, 204, 0.15);
+  color: var(--fg-muted);
+  border: 1px solid rgba(159, 176, 204, 0.3);
+}
+.ui-badge--success {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.ui-badge--warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.ui-badge--danger {
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--destructive);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+.ui-badge--info {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+[data-theme='light'] .ui-badge--neutral {
+  background: rgba(74, 88, 120, 0.1);
+  border-color: rgba(74, 88, 120, 0.2);
+}
+[data-theme='light'] .ui-badge--success {
+  background: rgba(5, 150, 105, 0.1);
+  border-color: rgba(5, 150, 105, 0.25);
+}
+[data-theme='light'] .ui-badge--warning {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+[data-theme='light'] .ui-badge--danger {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+[data-theme='light'] .ui-badge--info {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-btn,
+  .ui-card--interactive,
+  .ui-badge,
+  .ui-field .ui-input,
+  .ui-field .ui-select,
+  .ui-field .ui-textarea {
+    transition: none !important;
+  }
+  .ui-btn:not(:disabled):hover,
+  .ui-btn:not(:disabled):active {
+    transform: none;
+  }
+}

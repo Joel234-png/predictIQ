@@ -8,6 +8,7 @@ import { AxeAccessibility } from '../components/AxeAccessibility';
 import { WalletProvider } from '../lib/wallet/WalletProvider';
 import { darkModeInitScript } from '../lib/darkMode';
 import '../styles/tokens.css';
+import '../styles/ui.css';
 import '../styles/accessibility.css';
 import '../styles/landing.css';
 
