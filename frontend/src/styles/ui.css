@@ -1,14 +1,72 @@
 /**
- * PredictIQ UI primitives — interaction states.
+ * PredictIQ UI primitives.
  *
  * Button/Card/Modal/Select/TextInput/Textarea/Badge (src/components/ui/*)
- * apply their resting look via inline styles keyed off design tokens in
- * tokens.css. They also emit stable classNames (ui-btn, ui-card, ...) for
- * exactly the states inline styles can't express — :hover/:focus-visible/
- * :active and Badge's themed variant fills — which live here.
+ * are styled entirely through the classNames here, not inline `style`
+ * props: this app's CSP sends `style-src 'self'` with no `unsafe-inline`
+ * and no style nonce, so an inline style attribute is silently dropped by
+ * the browser rather than applied.
  */
 
 /* ---- Button ---- */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  text-decoration: none;
+}
+.ui-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.ui-btn--primary {
+  background-color: var(--gold);
+  color: var(--on-primary);
+  border: none;
+  font-weight: 600;
+}
+.ui-btn--danger {
+  background-color: var(--destructive);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+}
+.ui-btn--secondary {
+  background-color: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  font-weight: 500;
+}
+.ui-btn--ghost {
+  background-color: transparent;
+  color: var(--fg-muted);
+  border: none;
+  font-weight: 500;
+}
+.ui-btn__spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ui-spin 0.8s linear infinite;
+}
+@keyframes ui-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .ui-btn:focus-visible {
   outline: 2px solid var(--ring-strong);
   outline-offset: 2px;
@@ -35,6 +93,20 @@
 }
 
 /* ---- Card ---- */
+.ui-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+}
+.ui-card--no-padding {
+  padding: 0;
+}
+.ui-card--interactive {
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  cursor: pointer;
+}
 .ui-card--interactive:hover {
   border-color: var(--border-strong);
   box-shadow: var(--shadow);
@@ -44,14 +116,160 @@
   outline-offset: 2px;
   border-color: var(--border-strong);
 }
+.ui-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+.ui-card__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--fg);
+}
+.ui-card__body {
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  line-height: 1.5;
+}
+.ui-card__footer {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 
 /* ---- Modal ---- */
+.ui-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(5, 10, 20, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+.ui-modal {
+  width: 100%;
+  max-width: 560px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), 0 0 30px rgba(0, 0, 0, 0.6);
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  outline: none;
+}
+.ui-modal--w-540 {
+  max-width: 540px;
+}
+.ui-modal__header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.ui-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--fg);
+}
+.ui-modal__desc {
+  margin: 0.35rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  line-height: 1.4;
+}
+.ui-modal__close {
+  background: transparent;
+  border: none;
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+}
+.ui-modal__body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(80vh - 120px);
+}
 .ui-modal :where(button, a, input, select, textarea):focus-visible {
   outline: 2px solid var(--ring-strong);
   outline-offset: 2px;
 }
 
 /* ---- Form fields (Select/TextInput/Textarea) ---- */
+.ui-field {
+  margin-bottom: 1.25rem;
+}
+.ui-field__label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--fg);
+  margin-bottom: 0.4rem;
+}
+.ui-field__required {
+  color: var(--destructive);
+  margin-left: 0.25rem;
+}
+.ui-field__hint {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  margin-top: -0.2rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+.ui-field__error {
+  color: var(--destructive);
+  font-size: var(--text-xs);
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  background-color: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+.ui-select,
+.ui-textarea {
+  cursor: pointer;
+}
+.ui-textarea {
+  resize: vertical;
+  line-height: 1.5;
+  cursor: auto;
+}
+.ui-input--error,
+.ui-select--error,
+.ui-textarea--error {
+  border-color: var(--destructive);
+}
 .ui-field .ui-input:focus,
 .ui-field .ui-select:focus,
 .ui-field .ui-textarea:focus {
@@ -231,4 +449,123 @@
   .app-shell__nav-list {
     gap: 1.1rem;
   }
+}
+
+/* ---- Layout/spacing utilities ----
+   A small fixed set standing in for the one-off inline `style={{ display:
+   'flex', gap: ... }}` wrappers that used to litter admin pages/forms —
+   same CSP reason as the header comment above: those style props were
+   being silently dropped. Kept intentionally small (no arbitrary-value
+   generator); add a class here only once a third call site needs it. */
+.u-flex {
+  display: flex;
+}
+.u-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.u-flex-wrap {
+  flex-wrap: wrap;
+}
+.u-items-center {
+  align-items: center;
+}
+.u-items-start {
+  align-items: flex-start;
+}
+.u-items-end {
+  align-items: flex-end;
+}
+.u-justify-between {
+  justify-content: space-between;
+}
+.u-justify-end {
+  justify-content: flex-end;
+}
+.u-justify-center {
+  justify-content: center;
+}
+.u-flex-1 {
+  flex: 1;
+}
+.u-self-end {
+  align-self: flex-end;
+}
+.u-w-full {
+  width: 100%;
+}
+.u-gap-xs {
+  gap: 0.35rem;
+}
+.u-gap-sm {
+  gap: 0.5rem;
+}
+.u-gap-md {
+  gap: 0.75rem;
+}
+.u-gap-lg {
+  gap: 1rem;
+}
+.u-gap-xl {
+  gap: 1.5rem;
+}
+.u-mt-sm {
+  margin-top: 0.5rem;
+}
+.u-mt-md {
+  margin-top: 0.75rem;
+}
+.u-mt-lg {
+  margin-top: 1rem;
+}
+.u-mt-xl {
+  margin-top: 1.5rem;
+}
+.u-mt-2xl {
+  margin-top: 2rem;
+}
+.u-mb-0 {
+  margin-bottom: 0;
+}
+.u-text-xs {
+  font-size: var(--text-xs);
+}
+.u-text-sm {
+  font-size: var(--text-sm);
+}
+.u-text-right {
+  text-align: right;
+}
+.u-text-center {
+  text-align: center;
+}
+.u-muted {
+  color: var(--fg-muted);
+}
+.u-mono {
+  font-family: var(--font-mono, monospace);
+}
+.u-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.u-fw-600 {
+  font-weight: 600;
+}
+.u-grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+}
+.u-color-success {
+  color: var(--success);
+}
+.u-color-gold {
+  color: var(--gold);
+}
+.u-color-purple {
+  color: var(--purple-soft);
+}
+.u-color-danger {
+  color: var(--destructive);
 }
