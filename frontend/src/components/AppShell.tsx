@@ -50,25 +50,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <header
         role="banner"
+        className="app-shell__header"
         style={{
           borderBottom: '1px solid var(--border)',
-          backgroundColor: 'var(--surface)',
+          backgroundColor: 'color-mix(in srgb, var(--surface) 92%, transparent)',
+          backdropFilter: 'blur(12px)',
           position: 'sticky',
           top: 0,
           zIndex: 100,
         }}
       >
-        <div
-          style={{
-            maxWidth: 'var(--container)',
-            margin: '0 auto',
-            padding: '1rem 1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1.5rem',
-          }}
-        >
+        <div className="app-shell__header-inner">
           <Link
             href="/"
             aria-label="PredictIQ Home"
@@ -78,16 +70,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span style={{ color: 'var(--gold)' }}>IQ</span>
           </Link>
 
-          <nav aria-label="Primary navigation">
-            <ul
-              style={{
-                display: 'flex',
-                gap: '1.5rem',
-                listStyle: 'none',
-                margin: 0,
-                padding: 0,
-              }}
-            >
+          <nav aria-label="Primary navigation" className="app-shell__nav">
+            <ul className="app-shell__nav-list">
               {navItems.map((item) => {
                 const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
                 return (
@@ -95,10 +79,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <Link
                       href={item.href}
                       aria-current={isActive ? 'page' : undefined}
+                      className="app-shell__nav-link"
                       style={{
-                        textDecoration: 'none',
-                        fontSize: 'var(--text-sm)',
-                        fontWeight: 500,
                         color: isActive ? 'var(--gold)' : 'var(--fg-muted)',
                       }}
                     >

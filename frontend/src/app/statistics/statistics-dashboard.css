@@ -92,3 +92,11 @@
 .statistics-table tbody tr:last-child td {
   border-bottom: none;
 }
+
+@media (max-width: 640px) {
+  .statistics-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
