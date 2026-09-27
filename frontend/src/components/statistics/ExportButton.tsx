@@ -1,4 +1,5 @@
 import React from 'react';
+import { useI18n } from '../../lib/hooks/useI18n';
 import './ExportButton.css';
 
 export interface ExportSection {
@@ -74,6 +75,7 @@ function triggerDownload(filename: string, mimeType: string, content: string): v
 }
 
 export const ExportButton: React.FC<ExportButtonProps> = ({ sections, filenamePrefix, disabled }) => {
+  const { t } = useI18n();
   const isDisabled = disabled || sections.every((section) => section.rows.length === 0);
 
   const handleExportCsv = () => {
@@ -85,12 +87,12 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sections, filenamePr
   };
 
   return (
-    <div className="export-button-group" role="group" aria-label="Export statistics data">
+    <div className="export-button-group" role="group" aria-label={t('exportButton.groupAriaLabel')}>
       <button type="button" className="export-button" onClick={handleExportCsv} disabled={isDisabled}>
-        Export CSV
+        {t('exportButton.exportCsv')}
       </button>
       <button type="button" className="export-button" onClick={handleExportJson} disabled={isDisabled}>
-        Export JSON
+        {t('exportButton.exportJson')}
       </button>
     </div>
   );
