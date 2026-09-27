@@ -13,6 +13,9 @@ permissions:
 
 env:
   TF_WORKING_DIR: infrastructure/terraform
+  # Single source of truth for the Terraform CLI version. Must match the
+  # TERRAFORM_VERSION used by deploy.yml so PR-time plans and merge-time
+  # applies run the same binary. Documented in infrastructure/README.md.
   TF_VERSION: "1.9.0"
 
 jobs:
