@@ -11,6 +11,12 @@ on:
     paths:
       - 'infrastructure/terraform/**'
 
+# Serialize deploy runs instead of cancelling: the apply job holds a DynamoDB
+# state lock, so a superseded run must finish rather than be cancelled mid-apply.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   AWS_REGION: us-east-1
   TERRAFORM_VERSION: 1.5.0
@@ -197,28 +203,4 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan-${{ matrix.environment }}
-          path: infrastructure/terraform
-
-      - name: Terraform Init
-        working-directory: infrastructure/terraform
-        run: terraform init -backend-config="${{ steps.backend.outputs.file }}"
-
-      - name: Terraform Apply
-        working-directory: infrastructure/terraform
-        run: terraform apply -lock=true -lock-timeout=5m -auto-approve tfplan-${{ matrix.environment }}
-
-      - name: Output infrastructure details
-        working-directory: infrastructure/terraform
-        run: |
-          # Human-readable output still relies on Terraform's own `sensitive`
-          # redaction, so it's safe to print to the (already access-controlled) logs.
-          terraform output
-          # -json bypasses that redaction entirely, so strip the sensitive keys
-          # ourselves before anything touches disk / an uploaded artifact.
-          terraform output -json | jq 'del(.rds_endpoint, .redis_endpoint)' > /tmp/outputs-${{ matrix.environment }}.json
-
-      - name: Upload outputs
-        uses: actions/upload-artifact@v7
-        with:
-          name: outputs-${{ matrix.environment }}
-          path: /tmp/outputs-${{ matrix.environment }}.json
+    
