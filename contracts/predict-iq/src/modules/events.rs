@@ -197,13 +197,13 @@ pub fn emit_circuit_breaker_auto(e: &Env, contract_address: Address, error_count
 ///   accumulated per-bet fees tracked via `DataKey::FeeRevenue(token)`)
 pub fn emit_fee_collected(
     e: &Env,
-    _market_id: u64,
+    market_id: u64,
     token: Address,
     recipient: Address,
     amount: i128,
 ) {
     e.events().publish(
-        (symbol_short!("fee_colct"), 0u64, token, recipient),
+        (symbol_short!("fee_colct"), market_id, token, recipient),
         (EVENT_VERSION, amount),
     );
 }
@@ -281,6 +281,8 @@ pub fn emit_upgrade_initiated(e: &Env, initiator: Address, wasm_hash: soroban_sd
 }
 
 pub fn emit_upgrade_voted(e: &Env, voter: Address, vote_for: bool) {
-    e.
-
-/* … truncated 920 chars — edit only what you need near the top … */
+    e.events().publish(
+        (symbol_short!("upg_vote"), voter),
+        (EVENT_VERSION, vote_for),
+    );
+}
