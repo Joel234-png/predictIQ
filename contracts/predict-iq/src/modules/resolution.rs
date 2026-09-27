@@ -274,6 +274,23 @@ fn calculate_voting_outcome(e: &Env, market: &crate::types::Market) -> Result<u3
     Ok(winning_outcome)
 }
 
+/// Get resolution metrics for batch payout planning
+pub fn get_resolution_metrics(e: &Env, market_id: u64) -> Result<(u32, u64), ErrorCode> {
+    let market = markets::get_market(e, market_id).ok_or(ErrorCode::MarketNotFound)?;
+
+    let winning_outcome = market.winning_outcome.ok_or(ErrorCode::ResolutionNotReady)?;
+
+    // Issue #1535: use the per-outcome unique-bettor counter maintained by
+    // `markets::increment_outcome_bet_count` instead of the broken stub that
+    // always returned 0 or 1.
+    let winner_count = markets::count_bets_for_outcome(e, market_id, winning_outcome);
+
+    // Estimate gas: base cost + per-winner cost
+    let gas_estimate = 100_000 + (winner_count as u64 * 50_000);
+
+    Ok((winner_count, gas_estimate))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
