@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useAsync } from '../../lib/hooks/useAsync';
 import { api } from '../../lib/api/public-client';
 import type { components } from '../../lib/api/schema';
@@ -91,9 +92,9 @@ export function LiveMarketsTicker() {
         <h2 id="live-ticker-heading" className="live-ticker__heading">
           Live Markets
         </h2>
-        <a href="/markets" className="live-ticker__view-all">
+        <Link href="/markets" className="live-ticker__view-all">
           View all
-        </a>
+        </Link>
       </div>
 
       {status === 'loading' && (
@@ -127,7 +128,7 @@ export function LiveMarketsTicker() {
             const rowStatus = deriveRowStatus(market);
             return (
               <li key={market.id} className="live-ticker__row">
-                <a href={`/markets/${market.id}`} className="live-ticker__row-link">
+                <Link href={`/markets/${market.id}`} className="live-ticker__row-link">
                   <span className="live-ticker__title">{market.title}</span>
                   <span className={`live-ticker__tag live-ticker__tag--${rowStatus}`}>
                     {STATUS_LABEL[rowStatus]}
@@ -135,7 +136,7 @@ export function LiveMarketsTicker() {
                   <span className="live-ticker__volume mono tabular-nums">
                     {formatVolume(market.volume, market.settlement_asset)}
                   </span>
-                </a>
+                </Link>
               </li>
             );
           })}

@@ -29,13 +29,45 @@ const NAV_ITEMS = [
   { href: '/markets/create', label: 'Create Market' },
 ];
 
+/**
+ * Validates the stored admin key against the admin session endpoint.
+ *
+ * Key presence alone is not sufficient: a stale, revoked, or garbage key
+ * (including one left over from a failed login attempt) must not be
+ * treated as an active admin session. This mirrors the validation used by
+ * AdminAuthGate so both surfaces agree on what counts as a valid session.
+ */
+export async function validateAdminSession(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+
+  const key = sessionStorage.getItem('predictiq-admin-key');
+  if (!key) return false;
+
+  try {
+    const res = await fetch('/api/v1/admin/session', {
+      headers: { 'x-admin-key': key },
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isActiveNavItem = useActiveNavItem(pathname);
   const [hasAdminSession, setHasAdminSession] = useState(false);
 
   useEffect(() => {
-    setHasAdminSession(Boolean(sessionStorage.getItem('predictiq-admin-key')));
+    let cancelled = false;
+
+    validateAdminSession().then((valid) => {
+      if (!cancelled) setHasAdminSession(valid);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [pathname]);
 
   const isLandingPage = pathname === '/';
