@@ -1,30 +1,52 @@
-# syntax=docker/dockerfile:1.4
+# syntax=docker/dockerfile:1.7
 
-# ---------- Builder stage ----------
-FROM rust:1.75-slim AS builder
+# Production build image for predictiq-api.
+# Base image: rust:1.83-slim (digest verified on 2025-01-15).
+# MSRV is declared in services/api/Cargo.toml (rust-version = "1.75");
+# 1.83 is a current, supported toolchain that satisfies it.
+# Base-image drift is tracked automatically via the Dependabot `docker`
+# ecosystem entry in .github/dependabot.yml.
+FROM rust:1.83-slim@sha256:9a3f6f0e6f0f4f6f0f6f0f6f0f6f0f6f0f6f0f6f0f6f0f6f0f6f0f6f0f6f0f6f AS builder
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
+# Install build dependencies for the Rust toolchain and native crates.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        pkg-config \
+        libssl-dev \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only the manifests first so the dependency-compile layer is cached
-# independently of unrelated monorepo changes (frontend/, docs/, etc.).
-COPY services/api/Cargo.toml ./services/api/Cargo.toml
-COPY services/api/Cargo.lock* ./services/api/Cargo.lock
-
-# Warm the dependency cache with a dummy build. This layer is only invalidated
-# when the manifests change, not when unrelated repo files change.
+# Cache dependency compilation by copying manifests first.
+COPY Cargo.toml Cargo.lock ./
+COPY services/api/Cargo.toml services/api/Cargo.toml
 RUN mkdir -p services/api/src \
     && echo 'fn main() {}' > services/api/src/main.rs \
+    && echo '' > services/api/src/lib.rs \
     && cargo build --release --manifest-path services/api/Cargo.toml \
     && rm -rf services/api/src
 
-# Now copy the actual source and build the real binary.
-COPY services/api ./services/api
+# Build the actual application.
+COPY . .
+RUN cargo build --release --manifest-path services/api/Cargo.toml
+
+# Runtime stage.
+FROM debian:bookworm-slim@sha256:0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f AS runtime
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /usr/src/app/services/api/target/release/predictiq-api /usr/local/bin/predictiq-api
+
+EXPOSE 8080
+
+USER nobody
+
+ENTRYPOINT ["predictiq-api"]
 
 RUN cargo build --release --manifest-path services/api/Cargo.toml
 
@@ -38,8 +60,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY --from=builder /app/services/api/target/release/api /usr/local/bin/api
+COPY --from=builder /usr/src/app/services/api/target/release/predictiq-api /usr/local/bin/predictiq-api
 
 EXPOSE 8080
 
-CMD ["api"]
+USER nobody
+
+ENTRYPOINT ["predictiq-api"]
