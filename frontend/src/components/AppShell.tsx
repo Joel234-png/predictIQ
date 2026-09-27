@@ -21,6 +21,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useActiveNavItem } from '../hooks/useActiveNavItem';
 
 const NAV_ITEMS = [
   { href: '/markets', label: 'Markets' },
@@ -30,6 +31,7 @@ const NAV_ITEMS = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isActiveNavItem = useActiveNavItem(pathname);
   const [hasAdminSession, setHasAdminSession] = useState(false);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <nav aria-label="Primary navigation" className="app-shell__nav">
             <ul className="app-shell__nav-list">
               {navItems.map((item) => {
-                const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+                const isActive = isActiveNavItem(item.href);
                 return (
                   <li key={item.href}>
                     <Link
